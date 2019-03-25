@@ -21,6 +21,8 @@ public interface BloomFilter<T> extends Cloneable, Serializable {
      */
     boolean addRaw(byte[] element);
 
+    boolean[] addRaw(byte[][] elements);
+
     /**
      * Adds the passed value to the filter.
      *
@@ -30,6 +32,14 @@ public interface BloomFilter<T> extends Cloneable, Serializable {
      */
     default boolean add(T element) {
         return addRaw(toBytes(element));
+    }
+
+    default boolean[] add(T[] elements) {
+        byte[][] data =new byte[elements.length][];
+        for (int i = 0; i < elements.length; i++) {
+            data[i]=toBytes(elements[i]);
+        }
+        return addRaw(data);
     }
 
     /**

@@ -18,6 +18,7 @@ public class BloomFilterRedis<T> implements BloomFilter<T> {
     private final StringRedisTemplate template;
     private final FilterBuilder config;
     private final String name;
+    private final int hashNum;
 
     public BloomFilterRedis(FilterBuilder builder) {
         builder.complete();
@@ -25,6 +26,7 @@ public class BloomFilterRedis<T> implements BloomFilter<T> {
         this.template = builder.template();
         name = keys.getBitsKey();
         this.config = keys.persistConfig(builder);
+        hashNum=config.hashes();
     }
 
     @Override
@@ -35,6 +37,28 @@ public class BloomFilterRedis<T> implements BloomFilter<T> {
             return null;
         });
         return results.stream().allMatch(b -> (Boolean) b);
+    }
+
+    @Override
+    public boolean[] addRaw(byte[][] elements) {
+        List<Object> results = template.executePipelined((RedisCallback<Object>) redisConnection -> {
+            StringRedisConnection stringCoon = (StringRedisConnection) redisConnection;
+            for(byte[] element:elements){
+                Arrays.stream(hash(element)).forEach(p -> stringCoon.setBit(name, p, true));
+            }
+            return null;
+        });
+        boolean[] ret=new boolean[elements.length];
+        for (int i = 0; i < elements.length; i++) {
+            ret[i]=true;
+            for (int j = 0; j < hashNum; j++) {
+                if(!(boolean)(results.get(i*hashNum+j))){
+                    ret[i]=false;
+                    break;
+                }
+            }
+        }
+        return ret;
     }
 
     @Override
