@@ -108,6 +108,12 @@
             <version>6.6.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client-sniffer</artifactId>
+            <version>6.6.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>
