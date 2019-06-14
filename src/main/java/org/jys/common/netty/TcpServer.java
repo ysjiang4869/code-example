@@ -27,7 +27,7 @@ public class TcpServer {
 
     private EventLoopGroup workerGroup;
 
-    private int eventLoopPoolCoreSize = 10;
+    private int eventLoopPoolCoreSize = 15;
 
     private int eventLoopPoolMaxSize = 15;
 
