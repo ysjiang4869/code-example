@@ -75,9 +75,12 @@ public class BloomFilterRedis<T> implements BloomFilter<T> {
     @Override
     public boolean contains(byte[] element) {
         List<Boolean> results = template.execute(new SessionCallback<List<Boolean>>() {
+            // use redis transaction
             @Override
             public <K, V> List<Boolean> execute(RedisOperations<K, V> redisOperations) throws DataAccessException {
+                redisOperations.multi();
                 Arrays.stream(hash(element)).forEach(index -> template.opsForValue().getBit(name, index));
+                redisOperations.exec();
                 return Collections.emptyList();
             }
         });
