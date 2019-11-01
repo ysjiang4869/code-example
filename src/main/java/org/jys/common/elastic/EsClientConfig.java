@@ -9,6 +9,7 @@ import org.elasticsearch.client.sniff.SnifferBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 /**
  * @author YueSong Jiang
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @description <p> </p>
  */
 @Configuration
+@Profile("elastic")
 public class EsClientConfig {
 
     @Value("${elasticsearch.nodes.master}")
