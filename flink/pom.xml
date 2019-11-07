@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.jys.example</groupId>
+        <artifactId>code-example</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>example-flink</artifactId>
+
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-java</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-statebackend-rocksdb_2.11</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.flink</groupId>-->
+        <!--            <artifactId>flink-runtime-web_${scala.binary.version}</artifactId>-->
+        <!--            <version>${flink.version}</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-kafka_${scala.binary.version}</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.flink</groupId>-->
+        <!--            <artifactId>flink-connector-redis_${scala.binary.version}</artifactId>-->
+        <!--            <version>1.1.5</version>-->
+        <!--        </dependency>-->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.handlers</resource>
+                                </transformer>
+                                <transformer
+                                        implementation="org.springframework.boot.maven.PropertiesMergingResourceTransformer">
+                                    <resource>META-INF/spring.factories</resource>
+                                </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.schemas</resource>
+                                </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${start-class}</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!--    <build>-->
+    <!--        <plugins>-->
+    <!--            <plugin>-->
+    <!--                <groupId>org.apache.maven.plugins</groupId>-->
+    <!--                <artifactId>maven-shade-plugin</artifactId>-->
+    <!--                <executions>-->
+    <!--                    <execution>-->
+    <!--                        <phase>package</phase>-->
+    <!--                        <goals>-->
+    <!--                            <goal>shade</goal>-->
+    <!--                        </goals>-->
+    <!--                        <configuration>-->
+    <!--                            <transformers>-->
+    <!--                                <transformer-->
+    <!--                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">-->
+    <!--                                    <resource>META-INF/spring.handlers</resource>-->
+    <!--                                </transformer>-->
+    <!--                                <transformer-->
+    <!--                                        implementation="org.springframework.boot.maven.PropertiesMergingResourceTransformer">-->
+    <!--                                    <resource>META-INF/spring.factories</resource>-->
+    <!--                                </transformer>-->
+    <!--                                <transformer-->
+    <!--                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">-->
+    <!--                                    <resource>META-INF/spring.schemas</resource>-->
+    <!--                                </transformer>-->
+    <!--                                <transformer-->
+    <!--                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />-->
+    <!--                                <transformer-->
+    <!--                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
+    <!--                                    <mainClass>${start-class}</mainClass>-->
+    <!--                                </transformer>-->
+    <!--                            </transformers>-->
+    <!--                        </configuration>-->
+    <!--                    </execution>-->
+    <!--                </executions>-->
+    <!--            </plugin>-->
+    <!--        </plugins>-->
+    <!--    </build>-->
+    <!-- This profile helps to make things run out of the box in IntelliJ -->
+    <!-- Its adds Flink's core classes to the runtime class path. -->
+    <!-- Otherwise they are missing in IntelliJ, because the dependency is 'provided' -->
+    <profiles>
+        <profile>
+            <id>add-dependencies-for-IDEA</id>
+
+            <activation>
+                <property>
+                    <name>idea.version</name>
+                </property>
+            </activation>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.flink</groupId>
+                    <artifactId>flink-java</artifactId>
+                    <version>${flink.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.flink</groupId>
+                    <artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
+                    <version>${flink.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+</project>
