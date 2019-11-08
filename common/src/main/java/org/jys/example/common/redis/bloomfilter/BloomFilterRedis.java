@@ -50,7 +50,8 @@ public class BloomFilterRedis<T> implements BloomFilter<T> {
             }
             return null;
         });
-        return mergeMultiResults(results,hashNum,elements.size());
+        return mergeMultiResults(results.stream().map(x->(Boolean)x).collect(Collectors.toList()),
+                hashNum,elements.size());
     }
 
     @Override
@@ -66,30 +67,30 @@ public class BloomFilterRedis<T> implements BloomFilter<T> {
 
     @Override
     public boolean contains(byte[] element) {
-        List<Object> results = template.execute(new SessionCallback<List<Object>>() {
+        List<Boolean> results = template.execute(new SessionCallback<List<Boolean>>() {
             // use redis transaction
             @Override
-            public <K, V> List<Object> execute(@Nullable RedisOperations<K, V> redisOperations) throws DataAccessException {
+            public <K, V> List<Boolean> execute(@Nullable RedisOperations<K, V> redisOperations) throws DataAccessException {
                 if(Objects.isNull(redisOperations)){
                     throw new NullPointerException("redis operation is null");
                 }
                 redisOperations.multi();
                 Arrays.stream(hash(element)).forEach(index -> template.opsForValue().getBit(name, index));
-                return redisOperations.exec();
+                return redisOperations.exec().stream().map(x->(Boolean)x).collect(Collectors.toList());
             }
         });
         if (results == null || results.isEmpty()) {
             return false;
         }
-        return results.stream().allMatch(b -> Optional.ofNullable((Boolean)b).orElse(false));
+        return results.stream().allMatch(b -> Optional.ofNullable(b).orElse(false));
     }
 
     @Override
     public List<Boolean> contains(Collection<T> elements) {
-        List<Object> results = template.execute(new SessionCallback<List<Object>>() {
+        List<Boolean> results = template.execute(new SessionCallback<List<Boolean>>() {
             // use redis transaction
             @Override
-            public <K, V> List<Object> execute(@Nullable RedisOperations<K, V> redisOperations) throws DataAccessException {
+            public <K, V> List<Boolean> execute(@Nullable RedisOperations<K, V> redisOperations) throws DataAccessException {
                 if(Objects.isNull(redisOperations)){
                     throw new NullPointerException("redis operation is null");
                 }
@@ -97,14 +98,14 @@ public class BloomFilterRedis<T> implements BloomFilter<T> {
                 for(T element:elements){
                     Arrays.stream(hash(toBytes(element))).forEach(index -> template.opsForValue().getBit(name, index));
                 }
-                List<Object> multiResult=redisOperations.exec();
-                return mergeMultiResults(multiResult,hashNum,elements.size()).stream().map(x->(Object)x).collect(Collectors.toList());
+                List<Boolean> multiResult=redisOperations.exec().stream().map(x->(Boolean)x).collect(Collectors.toList());
+                return mergeMultiResults(multiResult,hashNum,elements.size());
             }
         });
         if(results==null){
             return Collections.emptyList();
         }
-        return results.stream().map(x->(Boolean)x).collect(Collectors.toList());
+        return results;
     }
 
     @Override
@@ -112,7 +113,7 @@ public class BloomFilterRedis<T> implements BloomFilter<T> {
         return contains(elements).stream().allMatch(b -> Optional.ofNullable(b).orElse(false));
     }
 
-    private List<Boolean> mergeMultiResults(List<Object> result, int hashNum, int elementSize){
+    private List<Boolean> mergeMultiResults(List<Boolean> result, int hashNum, int elementSize){
         if(elementSize*hashNum!=result.size()){
             throw new RuntimeException("result size is not right");
         }
@@ -120,7 +121,7 @@ public class BloomFilterRedis<T> implements BloomFilter<T> {
         for (int i = 0; i < elementSize; i++) {
             ret[i]=true;
             for (int j = 0; j < hashNum; j++) {
-                if(!(boolean)(result.get(i*hashNum+j))){
+                if(!result.get(i*hashNum+j)){
                     ret[i]=false;
                     break;
                 }
