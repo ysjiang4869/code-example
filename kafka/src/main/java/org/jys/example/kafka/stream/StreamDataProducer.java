@@ -1,23 +1,21 @@
-package org.jys.example.kafka;
+package org.jys.example.kafka.stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.jys.example.kafka.common.VehicleRandom;
-import org.jys.example.kafka.entity.Vehicle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.time.Instant;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -28,7 +26,8 @@ import java.util.concurrent.Executors;
  * @date 2019/9/23
  */
 @Component
-public class VehicleProducer {
+@Profile("stream")
+public class StreamDataProducer {
 
     private final KafkaAdmin kafkaAdmin;
 
@@ -45,9 +44,10 @@ public class VehicleProducer {
     @Value("${stream.kafka.continue_if_exist:false}")
     private boolean continueIfExist;
 
-    private static final Logger logger= LoggerFactory.getLogger(VehicleProducer.class);
+    private static final Logger logger= LoggerFactory.getLogger(StreamDataProducer.class);
 
-    public VehicleProducer(KafkaAdmin kafkaAdmin, KafkaTemplate<String, String> kafkaTemplate) {
+    @Autowired
+    public StreamDataProducer(KafkaAdmin kafkaAdmin, KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaAdmin = kafkaAdmin;
         this.kafkaTemplate = kafkaTemplate;
         mapper=new ObjectMapper();
@@ -81,16 +81,16 @@ public class VehicleProducer {
         List<CompletableFuture<Void>> futureList=new ArrayList<>(thread);
         for (int i = 0; i < thread; i++) {
             CompletableFuture<Void> future=CompletableFuture.runAsync(() -> {
-                try {
-                    for (int j = 0; j < dataCount/thread; j++) {
-                        Vehicle vehicle= VehicleRandom.getRandomVehicle();
-                        kafkaTemplate.send(dataTopic,mapper.writeValueAsString(vehicle))
-                                .addCallback(stringStringSendResult -> {
+                Random random=new Random();
+                for (int j = 0; j < dataCount/thread; j++) {
+                    ObjectNode node=mapper.createObjectNode();
+                    node.put("passtime", Instant.now().getEpochSecond());
+                    node.put("tollgateID",Integer.toString(random.nextInt(1_0)));
+                    node.put("recordid",UUID.randomUUID().toString());
+                    kafkaTemplate.send(dataTopic,node.asText())
+                            .addCallback(stringStringSendResult -> {
 
-                                }, throwable -> logger.error(throwable.getMessage(),throwable));
-                    }
-                } catch (JsonProcessingException e) {
-                    logger.error(e.getMessage(),e);
+                            }, throwable -> logger.error(throwable.getMessage(),throwable));
                 }
             }, executor);
             futureList.add(future);

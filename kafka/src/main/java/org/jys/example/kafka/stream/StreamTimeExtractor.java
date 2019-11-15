@@ -1,4 +1,4 @@
-package org.jys.example.kafka;
+package org.jys.example.kafka.stream;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +14,7 @@ import java.util.Map;
  * @author YueSong Jiang
  * @date 2019/9/23
  */
-public class VehicleTimeExtractor implements TimestampExtractor {
+public class StreamTimeExtractor implements TimestampExtractor {
 
     private static final String TIME_KEY="passTime";
 
@@ -22,7 +22,7 @@ public class VehicleTimeExtractor implements TimestampExtractor {
 
     private final TypeReference<Map<String,Object>> mapType=new TypeReference<Map<String, Object>>() {};
 
-    private static final Logger logger= LoggerFactory.getLogger(VehicleTimeExtractor.class);
+    private static final Logger logger= LoggerFactory.getLogger(StreamTimeExtractor.class);
 
     @Override
     public long extract(ConsumerRecord<Object, Object> consumerRecord, long l) {

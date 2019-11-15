@@ -1,4 +1,4 @@
-package org.jys.example.flink;
+package org.jys.example.flink.stream;
 
 import org.apache.flink.api.common.JobExecutionResult;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
@@ -23,11 +23,9 @@ import org.apache.flink.streaming.runtime.tasks.ProcessingTimeCallback;
 import org.apache.flink.streaming.runtime.tasks.ProcessingTimeService;
 import org.apache.flink.streaming.util.serialization.JSONKeyValueDeserializationSchema;
 import org.apache.flink.util.Collector;
-
 import org.jys.example.flink.utils.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.StringRedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -48,7 +46,6 @@ import java.util.function.Supplier;
  * @date 2019/9/25
  */
 @Component
-@Profile("flink")
 public class FlinkStreamWindowedCount implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,13 +58,26 @@ public class FlinkStreamWindowedCount implements Serializable {
     @Value("${stream.kafka.data_topic}")
     private String dataTopic;
 
+    @Value("${flink.environment.remote.host}")
+    private String remoteHost;
+
+    @Value("${flink.environment.remote.port}")
+    private int  remotePort;
+
+    @Value("${flink.environment.remote}")
+    private boolean useRemoteEnvironment;
+
 
 
     @Autowired
-    public FlinkStreamWindowedCount(StringRedisTemplate redisTemplate) throws IOException {
-//        env = StreamExecutionEnvironment.
-//                createRemoteEnvironment("192.168.14.36",52971,"C:\\jys\\code\\stream-example\\target\\stream-example-1.0-shaded.jar");
-        env = StreamExecutionEnvironment.getExecutionEnvironment();
+    public FlinkStreamWindowedCount() throws IOException {
+        if(useRemoteEnvironment){
+            env = StreamExecutionEnvironment.
+                createRemoteEnvironment(remoteHost,remotePort,"C:\\jys\\code\\stream-example\\target\\stream-example-1.0-shaded.jar");
+        }else {
+            env = StreamExecutionEnvironment.getExecutionEnvironment();
+        }
+
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 //        env.getConfig().setAutoWatermarkInterval();
         env.enableCheckpointing(600000);

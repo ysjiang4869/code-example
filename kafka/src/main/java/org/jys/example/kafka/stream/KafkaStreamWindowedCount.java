@@ -1,4 +1,4 @@
-package org.jys.example.kafka;
+package org.jys.example.kafka.stream;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @date 2019/9/23
  */
 @Component
-@Profile("kafka")
+@Profile("stream")
 public class KafkaStreamWindowedCount {
 
 
@@ -65,7 +65,7 @@ public class KafkaStreamWindowedCount {
                                     @Value("${stream.kafka.replicas_num}")int replicas) {
         properties = new Properties();
         this.dataTopic = dataTopic;
-        properties.put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, VehicleTimeExtractor.class);
+        properties.put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, StreamTimeExtractor.class);
         properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         properties.put(StreamsConfig.APPLICATION_ID_CONFIG, dataTopic);
         properties.put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, replicas);

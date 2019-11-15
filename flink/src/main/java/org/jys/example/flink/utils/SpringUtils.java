@@ -12,17 +12,20 @@ import org.springframework.util.StringValueResolver;
 /**
  * @author YueSong Jiang
  * @date 2019/3/15
- * @description <p> </p>
  */
 @Component
 public class SpringUtils implements EmbeddedValueResolverAware, ApplicationContextAware {
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
 
     private static ApplicationContext applicationContext;
     private static StringValueResolver stringValueResolver;
     private static final String KEY_FORMAT = "${%s}";
+
+    @Autowired
+    public SpringUtils(Environment env) {
+        this.env = env;
+    }
 
     @Override
     public void setEmbeddedValueResolver(StringValueResolver stringValueResolver) {
