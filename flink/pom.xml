@@ -11,6 +11,10 @@
 
     <artifactId>example-flink</artifactId>
 
+    <properties>
+        <start-class>org.jys.example.flink.FlinkExampleApplication</start-class>
+    </properties>
+
 
     <dependencies>
 
