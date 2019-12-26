@@ -43,7 +43,7 @@ public class PostgresCopyIn {
         } catch (SQLException | IOException e) {
             e.printStackTrace();
             if(e instanceof PSQLException){
-                String code=((PSQLException)e).getSQLState()
+                String code=((PSQLException)e).getSQLState();
                 if("23305".equals(code)){
                     return result;
                 }
