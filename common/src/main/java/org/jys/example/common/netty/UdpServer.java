@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author YueSong Jiang
  * @date 2019/3/13
- * @description <p> </p>
+ * Udp server example use netty
  */
 public class UdpServer {
 
@@ -25,9 +25,7 @@ public class UdpServer {
 
     private EventLoopGroup workerGroup;
 
-    private int eventLoopPoolCoreSize = 10;
-
-    private int eventLoopPoolMaxSize = 15;
+    private int eventLoopPoolSize = 15;
 
     private int eventLoopPoolBossSize = 5;
 
@@ -37,7 +35,8 @@ public class UdpServer {
     public UdpServer() {
 
         NamedThreadFactory factory = new NamedThreadFactory("udp-server-worker");
-        Executor executor = new ThreadPoolExecutor(eventLoopPoolCoreSize, eventLoopPoolMaxSize, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>(), factory);
+        // The core size must be equal to the max size
+        Executor executor = new ThreadPoolExecutor(eventLoopPoolSize, eventLoopPoolSize, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>(), factory);
 
         bossGroup = new NioEventLoopGroup(eventLoopPoolBossSize, executor);
         workerGroup = new NioEventLoopGroup(eventLoopPoolWorkerSize, executor);

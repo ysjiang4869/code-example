@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author YueSong Jiang
  * @date 2019/3/13
- * @description <p> </p>
+ * Tcp server use netty
  */
 public class TcpServer {
 
@@ -27,9 +27,7 @@ public class TcpServer {
 
     private EventLoopGroup workerGroup;
 
-    private int eventLoopPoolCoreSize = 15;
-
-    private int eventLoopPoolMaxSize = 15;
+    private int eventLoopPoolSize = 15;
 
     private int eventLoopPoolBossSize = 5;
 
@@ -39,7 +37,8 @@ public class TcpServer {
     public TcpServer() {
 
         NamedThreadFactory factory = new NamedThreadFactory("tcp-server-worker");
-        Executor executor = new ThreadPoolExecutor(eventLoopPoolCoreSize, eventLoopPoolMaxSize, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>(), factory);
+        // The core size must be equal to the max size
+        Executor executor = new ThreadPoolExecutor(eventLoopPoolSize, eventLoopPoolSize, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>(), factory);
 
         bossGroup = new NioEventLoopGroup(eventLoopPoolBossSize, executor);
         workerGroup = new NioEventLoopGroup(eventLoopPoolWorkerSize, executor);

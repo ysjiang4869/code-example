@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * @author YueSong Jiang
  * @date 2019/3/15
- * @description <p> </p>
+ * Bloom filter redis realize
  */
 public class BloomFilterRedis<T> implements BloomFilter<T> {
     private final StringRedisTemplate template;

@@ -3,7 +3,7 @@ package org.jys.example.common.utils;
 /**
  * @author YueSong Jiang
  * @date 2018/4/5
- * @description <p> </p>
+ * a loop queue can in-queue and dequeue byte and byte array
  */
 public class ByteQueueBuffer {
 
@@ -76,8 +76,9 @@ public class ByteQueueBuffer {
         int firstPart = (array.length - tail < numToCopy) ? array.length - tail : numToCopy;
         System.arraycopy(value, 0, array, tail, firstPart);
         numToCopy -= firstPart;
-        if (numToCopy > 0)
+        if (numToCopy > 0) {
             System.arraycopy(value, array.length - tail, array, 0, numToCopy);
+        }
 
         tail = (tail + value.length) % array.length;
         size += value.length;
@@ -107,7 +108,7 @@ public class ByteQueueBuffer {
     }
 
     /**
-     * retun the first value of queue
+     * return the first value of queue
      *
      * @return queue head value
      */

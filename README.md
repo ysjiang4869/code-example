@@ -6,16 +6,27 @@
 
 ### 模块列表
 
+#### common
+
 | 子包名            | 说明                                       |
 | ----------------- | ---------------------------------------- |
-| codec             |                                          |
-| concurrent        |                                          |
+| codec             | 编码解码，加密解密                                         |
+| concurrent        | Java多线程相关                                         |
 | elastic           | ElasticSearch客户端的使用                 |
-| kubernetes        |                                          |
+| kubernetes        | Kubernetes API使用                                         |
 | netty             | 使用Netty实现TCP/UDP服务端和客户端          |
 | redis.bloomfilter | 布隆过滤器，基于redis和spring-data-redis    |
-| spring            |                                          |
-| utils             |                                          |
-| zookeeper         |                                          |
+| spring            | Spring相关的工具类或示例                                         |
+| utils             | 通用工具                                         |
+| zookeeper         | zookeeper客户端使用                                         |
+
+#### flink
+
+flink使用示例程序
 
 
+#### kafka
+kafka 使用示例程序，包括
+- producer示例
+- consumer示例：包括原生kafka，基于Spring-kafka的接口、注解的多种使用方式示例。
+- kafka-stream示例

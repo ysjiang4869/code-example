@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author YueSong Jiang
  * @date 2019/3/13
- * @description <p> </p>
+ * Zookeeper curator use example
  */
 public class ZookeeperExample {
 
@@ -47,7 +47,7 @@ public class ZookeeperExample {
         }
     }
 
-    private void distributedlockExample() {
+    private void distributedLockExample() {
         String path = "/test/lock";
         InterProcessLock lock = new InterProcessMutex(zkClient, path);
         try {

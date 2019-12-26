@@ -12,13 +12,14 @@ import org.springframework.util.StringValueResolver;
 /**
  * @author YueSong Jiang
  * @date 2019/3/15
- * @description <p> </p>
+ * Get spring bean by class or bean name
+ * You are not recommended to use this method, because you can't be sure this will be initialized before use
+ * You should implements the ApplicationContextAware if any class need, or not use static method in this class
+ * and wired bean when need
  */
 @Component
 public class SpringUtils implements EmbeddedValueResolverAware, ApplicationContextAware {
 
-    @Autowired
-    private Environment env;
 
     private static ApplicationContext applicationContext;
     private static StringValueResolver stringValueResolver;

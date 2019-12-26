@@ -3,7 +3,9 @@ package org.jys.example.common.utils;
 /**
  * @author YueSong Jiang
  * @date 2019/3/14
- * @description <p> </p>
+ * coordinate common tools
+ * 1. get new position based on distance
+ * 2. get distance of two point
  */
 public class CoordinateUtils {
 

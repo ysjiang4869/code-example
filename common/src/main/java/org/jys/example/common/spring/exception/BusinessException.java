@@ -3,7 +3,7 @@ package org.jys.example.common.spring.exception;
 /**
  * @author YueSong Jiang
  * @date 2019/3/16
- * @description <p> </p>
+ * Common exception for self-defined
  */
 public class BusinessException extends RuntimeException {
 

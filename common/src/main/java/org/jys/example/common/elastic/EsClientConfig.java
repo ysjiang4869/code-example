@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Profile;
 /**
  * @author YueSong Jiang
  * @date 2019/3/28
- * @description <p> </p>
+ * Elastic high-level client and sniffer config example
  */
 @Configuration
 @Profile("elastic")

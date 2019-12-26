@@ -16,13 +16,14 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 /**
  * @author YueSong Jiang
  * @date 2019/3/21
- * @description <p> </p>
+ * Elastic transport client config and use example
+ * TODO add more example
  */
-public class TasnsportClientExample {
+public class TransportClientExample {
 
     private TransportClient client;
 
-    public TasnsportClientExample() throws UnknownHostException {
+    public TransportClientExample() throws UnknownHostException {
         Settings settings = Settings.builder()
                 .put("cluster.name", "elasticsearch-cluster").build();
         client = new PreBuiltTransportClient(settings)

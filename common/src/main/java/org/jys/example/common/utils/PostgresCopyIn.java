@@ -14,7 +14,7 @@ import java.sql.SQLException;
 /**
  * @author YueSong Jiang
  * @date 2019/6/26
- * @description <p> </p>
+ * Postgres Copy-In tools
  */
 public class PostgresCopyIn {
 

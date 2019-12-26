@@ -16,7 +16,8 @@ import java.util.zip.ZipOutputStream;
 /**
  * @author jiangyueosng
  * @date 2019/1/12
- * @description <p> </p>
+ * Zip compress and decompress tools
+ * Support byte[] data and file
  */
 public class ZipUtils {
 
@@ -66,10 +67,10 @@ public class ZipUtils {
     /**
      * unzip file
      *
-     * @param file     file
+     * @param file zip compressed file
      * @param savePath unzip save folder
      */
-    public static void unip(File file, String savePath) throws IOException {
+    public static void unZip(File file, String savePath) throws IOException {
         File saveFolder = Paths.get(savePath).toFile();
         if (!saveFolder.exists()) {
             boolean createSuccess = saveFolder.mkdirs();

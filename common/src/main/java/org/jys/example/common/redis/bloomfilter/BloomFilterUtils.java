@@ -9,27 +9,42 @@ import java.util.Optional;
 /**
  * @author YueSong Jiang
  * @date 2019/3/15
- * @description <p> </p>
+ * Common tools for bloom filter
  */
 public class BloomFilterUtils {
 
     private BloomFilterUtils() {
     }
 
-    private static void deleteDeprecatedkeys(StringRedisTemplate redisTemplate,
+    /**
+     * delete no use keys when update redis bloom filter
+     * @param redisTemplate spring redis template
+     * @param keyFormat the bloom filter key prefix
+     * @param num the first num need to be delete
+     */
+    private static void deleteDeprecatedKeys(StringRedisTemplate redisTemplate,
                                              String keyFormat, int num) {
-        boolean hasDeprecatedkey = true;
+        boolean hasDeprecatedKey = true;
         int i = num;
         String key;
-        while (hasDeprecatedkey) {
+        while (hasDeprecatedKey) {
             key = keyFormat + i;
             Boolean b = redisTemplate.hasKey(key);
-            hasDeprecatedkey = Optional.ofNullable(b).orElse(false);
+            hasDeprecatedKey = Optional.ofNullable(b).orElse(false);
             redisTemplate.delete(key);
             i++;
         }
     }
 
+    /**
+     * create the bloom filters
+     * this will create multi many bloom-filter if the expectElements is too large
+     * @param expectElements the number of element need to filter
+     * @param falsePositive the false positive
+     * @param keyFormat the bloom filter key prefix
+     * @param redisTemplate spring redis template
+     * @return multi bloom-filter with num 0-N
+     */
     public static Map<Integer, BloomFilter<String>> createBloomFilter(long expectElements, double falsePositive,
                                                                       String keyFormat,
                                                                       StringRedisTemplate redisTemplate) {
@@ -52,7 +67,7 @@ public class BloomFilterUtils {
             System.out.println(filterInfo);
             bloomFilterHashMap.put(i, bloomFilter);
         }
-        BloomFilterUtils.deleteDeprecatedkeys(redisTemplate, keyFormat, num);
+        BloomFilterUtils.deleteDeprecatedKeys(redisTemplate, keyFormat, num);
         return bloomFilterHashMap;
     }
 }

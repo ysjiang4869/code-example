@@ -15,9 +15,9 @@ import java.util.Map;
 /**
  * @author YueSong Jiang
  * @date 2017/12/5
- * @description <p> </p>
+ * construct filedName-value key parir for construct sql
  */
-public class SQLUtils {
+public class SqlUtils {
 
     /**
      * get properties map,key is field name and value is object field value

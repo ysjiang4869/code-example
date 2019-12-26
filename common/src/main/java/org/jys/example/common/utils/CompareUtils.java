@@ -8,11 +8,11 @@ import java.util.*;
 /**
  * @author YueSong Jiang
  * @date 2017/10/10
- * @description <p> </p>
+ * Compare two object return different fields or if equal
  */
 public class CompareUtils {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     /**
      * Compare two object and return modified fields which contain in comparedProperties
@@ -34,7 +34,7 @@ public class CompareUtils {
             if (null == source && null == target) return modifies;
             else if (null == target) return modifies;
             else {
-                return mapper.convertValue(target, new TypeReference<Map<String, Object>>() {
+                return MAPPER.convertValue(target, new TypeReference<Map<String, Object>>() {
                 });
             }
         }
@@ -42,9 +42,9 @@ public class CompareUtils {
         if (!Objects.equals(source.getClass().getName(), target.getClass().getName())) {
             throw new ClassCastException("source and target are not same class type");
         }
-        Map<String, Object> sourceMap = mapper.convertValue(source, new TypeReference<Map<String, Object>>() {
+        Map<String, Object> sourceMap = MAPPER.convertValue(source, new TypeReference<Map<String, Object>>() {
         });
-        Map<String, Object> targetMap = mapper.convertValue(target, new TypeReference<Map<String, Object>>() {
+        Map<String, Object> targetMap = MAPPER.convertValue(target, new TypeReference<Map<String, Object>>() {
         });
 
         sourceMap.forEach((k, v) -> {
@@ -68,16 +68,16 @@ public class CompareUtils {
      *                           null means to compare all
      * @return if equal
      */
-    public static boolean isEuqal(Object source, Object target, Set<String> comparedProperties) {
+    public static boolean isEqual(Object source, Object target, Set<String> comparedProperties) {
         if (null == source || null == target) {
             return null == source && null == target;
         }
         if (!Objects.equals(source.getClass().getName(), target.getClass().getName())) {
             return false;
         }
-        Map<String, Object> sourceMap = mapper.convertValue(source, new TypeReference<Map<String, Object>>() {
+        Map<String, Object> sourceMap = MAPPER.convertValue(source, new TypeReference<Map<String, Object>>() {
         });
-        Map<String, Object> targetMap = mapper.convertValue(target, new TypeReference<Map<String, Object>>() {
+        Map<String, Object> targetMap = MAPPER.convertValue(target, new TypeReference<Map<String, Object>>() {
         });
 
         for (String k : sourceMap.keySet()) {

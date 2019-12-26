@@ -17,13 +17,13 @@ import java.net.BindException;
 /**
  * @author YueSong Jiang
  * @date 2019/3/16
- * @description <p> </p>
+ * Interrupt all exceptions and return standard error response
  */
 @ControllerAdvice
-public class GlobalExceptionhandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = BusinessException.class)
-    public ErrorResponse handleBussinessException(BusinessException e, HttpServletResponse response) {
+    public ErrorResponse handleBusinessException(BusinessException e, HttpServletResponse response) {
         response.setStatus(e.getResponseStatus());
         return new ErrorResponse(e.getErrorCode(), e.getErrorMessage());
     }
@@ -40,14 +40,14 @@ public class GlobalExceptionhandler {
             BindException.class,
             ConstraintViolationException.class,
             ValidationException.class})
-    public ErrorResponse handlebadRequestException(Exception e, HttpServletResponse response) {
+    public ErrorResponse handleBadRequestException(Exception e, HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         return new ErrorResponse(400, e.getMessage());
     }
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMethodArgumentTypeMissmatchexception(MethodArgumentTypeMismatchException e) {
+    public ErrorResponse handleMethodArgumentTypeMissMatchException(MethodArgumentTypeMismatchException e) {
         return new ErrorResponse(400,
                 String.format("input value type for parameter [%s] doesn't match! required value type is [%s]",
                         e.getName(), e.getRequiredType()));

@@ -10,7 +10,7 @@ import io.netty.handler.codec.bytes.ByteArrayEncoder;
 /**
  * @author YueSong Jiang
  * @date 2019/3/13
- * @description <p> </p>
+ * Udp client example use netty
  */
 public class UdpClient {
 

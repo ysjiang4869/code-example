@@ -11,7 +11,7 @@ import io.netty.handler.codec.bytes.ByteArrayEncoder;
 /**
  * @author YueSong Jiang
  * @date 2019/3/13
- * @description <p> </p>
+ * Tcp client use netty
  */
 public class TcpClient {
 

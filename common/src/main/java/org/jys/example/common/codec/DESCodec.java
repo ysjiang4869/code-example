@@ -19,7 +19,7 @@ import java.util.Random;
 /**
  * @author YueSong Jiang
  * @date 2019/1/12
- * @description <p> </p>
+ * DES CBC encrypt and decrypt tools
  */
 public class DESCodec {
 
@@ -31,7 +31,7 @@ public class DESCodec {
     /**
      * generate des key and encode to string use base64 in order to save
      *
-     * @return string des key
+     * @return string des key, the key may be not use readable
      */
     public static String generateKey() {
         KeyGenerator keyGenerator;

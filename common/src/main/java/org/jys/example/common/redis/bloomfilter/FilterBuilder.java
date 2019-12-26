@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author YueSong Jiang
  * @date 2019/3/15
- * @description <p> </p>
+ * Builder for create single redis bloom filter
  */
 public class FilterBuilder implements Cloneable, Serializable {
     private static final long serialVersionUID = 1;

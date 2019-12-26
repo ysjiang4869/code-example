@@ -8,7 +8,7 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 /**
  * @author YueSong Jiang
  * @date 2019/3/13
- * @description <p> </p>
+ * Kubernetes fabric8 client use example
  */
 public class KubernetesClientService {
 

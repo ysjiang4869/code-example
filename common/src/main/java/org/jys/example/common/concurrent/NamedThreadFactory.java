@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author YueSong Jiang
  * @date 2019/3/13
- * @description <p> </p>
+ * Create user-defined thread factory, this is ali recommend method
  */
 public class NamedThreadFactory implements ThreadFactory {
 

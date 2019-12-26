@@ -4,7 +4,7 @@ package org.jys.example.common.utils;
 /**
  * @author YueSong Jiang
  * @date 2019/1/12
- * @description <p> </p>
+ * common tools for byte operation
  */
 public class ByteUtils {
 

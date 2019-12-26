@@ -3,7 +3,7 @@ package org.jys.example.common.spring.exception;
 /**
  * @author YueSong Jiang
  * @date 2019/3/16
- * @description <p> </p>
+ * Common error response
  */
 public class ErrorResponse {
 

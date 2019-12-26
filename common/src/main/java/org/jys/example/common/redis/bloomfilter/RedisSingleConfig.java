@@ -15,7 +15,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 /**
  * @author YueSong Jiang
  * @date 2019/3/15
- * @description <p> </p>
+ * Redis single configuration based on lettuce
  */
 @Configuration
 @ConditionalOnProperty(name = "redis.wifi.cluster", havingValue = "false", matchIfMissing = true)
