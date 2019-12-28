@@ -1,8 +1,9 @@
 package org.jys.example.common.utils;
 
 import javassist.*;
-import org.jys.database.dao.PersonStructured;
+import org.jys.example.common.spring.CopyInDataObject;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +15,10 @@ import java.util.stream.Collectors;
 public class CopyMethodGenerator {
 
     public static void addMethod(String className) throws NotFoundException, ClassNotFoundException, CannotCompileException {
+        Class c=Class.forName(className);
+        if(!CopyInData.class.isAssignableFrom(c)){
+            throw new NullPointerException();
+        }
         ClassPool classPool= ClassPool.getDefault();
         classPool.appendClassPath(new LoaderClassPath(CopyMethodGenerator.class.getClassLoader()));
         CtClass ct=classPool.getCtClass(className);
@@ -40,28 +45,28 @@ public class CopyMethodGenerator {
                 }).collect(Collectors.toList());
         StringBuilder body=new StringBuilder("return new StringBuilder()");
         for (CtField f: sortedFields ){
-            body.append(".append(").append(f.getName()).append(").append('\\030')");
+            body.append(".append(").append(f.getName()).append(").append(").append("getDelimiter()").append(")");
         }
         body.append(".toString();");
         System.out.println(body);
-        ct.getDeclaredMethod("generateCopySql").setBody(body.toString());
+        ct.getDeclaredMethod("generateCopyString").setBody(body.toString());
         ct.toClass();
+        try {
+            ct.writeFile("test");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args){
         try {
-            addMethod("org.jys.database.dao.PersonStructured");
-            PersonStructured p=new PersonStructured();
-            p.setRecordID(1111111L);
-            p.setPersonID("xxx");
-            System.out.println('\030');
-            String x=p.generateCopySql();
-            System.out.println(p.generateCopySql());
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (CannotCompileException e) {
+            addMethod("org.jys.example.common.spring.CopyInDataObject");
+            CopyInDataObject p=new CopyInDataObject();
+            p.setRecordId(1111111L);
+            p.setPersonId("xxx");
+            String copyString=p.generateCopyString();
+            System.out.println(copyString);
+        } catch (NotFoundException | ClassNotFoundException | CannotCompileException e) {
             e.printStackTrace();
         }
     }
