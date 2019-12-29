@@ -1,7 +1,7 @@
-package org.jys.example.common.spring;
+package org.jys.example.common.sql;
 
-import org.jys.example.common.utils.CopyInData;
-import org.jys.example.common.utils.CopyOrder;
+import org.jys.example.common.sql.CopyInData;
+import org.jys.example.common.sql.CopyOrder;
 
 /**
  * @author YueSong Jiang

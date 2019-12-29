@@ -1,4 +1,4 @@
-package org.jys.example.common.utils;
+package org.jys.example.common.sql;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

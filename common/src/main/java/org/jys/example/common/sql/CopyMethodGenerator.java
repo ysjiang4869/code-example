@@ -1,7 +1,6 @@
-package org.jys.example.common.utils;
+package org.jys.example.common.sql;
 
 import javassist.*;
-import org.jys.example.common.spring.CopyInDataObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +31,7 @@ public class CopyMethodGenerator {
         CtClass ct=classPool.getCtClass(className);
         //validate if the class inherit CopyIn interface
         CtClass[] interfaces=ct.getInterfaces();
-        CtClass copyInInterface=classPool.getCtClass("org.jys.example.common.utils.CopyInData");
+        CtClass copyInInterface=classPool.getCtClass("org.jys.example.common.sql.CopyInData");
         if(!Arrays.asList(interfaces).contains(copyInInterface)){
             String msg=String.format("class [%s] not inherited from [%s]",className, copyInInterface.getName());
            throw new NotFoundException(msg);
@@ -72,7 +71,7 @@ public class CopyMethodGenerator {
 
     public static void main(String[] args){
         try {
-            modifyCopyMethod("org.jys.example.common.spring.CopyInDataObject");
+            modifyCopyMethod("org.jys.example.common.sql.CopyInDataObject");
             CopyInDataObject p=new CopyInDataObject();
             p.setRecordId(123456L);
             p.setPersonId("3789k199365541235");

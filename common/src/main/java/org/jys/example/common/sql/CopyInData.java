@@ -1,4 +1,4 @@
-package org.jys.example.common.utils;
+package org.jys.example.common.sql;
 
 /**
  * @author YueSong Jiang

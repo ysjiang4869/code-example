@@ -1,4 +1,4 @@
-package org.jys.example.common.utils;
+package org.jys.example.common.sql;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.postgresql.copy.CopyManager;
