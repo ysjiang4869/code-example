@@ -7,6 +7,9 @@ import java.lang.annotation.Target;
 
 /**
  * @author jiangys
+ * add to CopyIn data field
+ * there musn't be same value for same class
+ * it is recommend to use from 0 and use continuous number
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

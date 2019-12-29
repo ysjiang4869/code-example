@@ -9,6 +9,10 @@ import org.jys.example.common.utils.CopyOrder;
  */
 public class CopyInDataObject implements CopyInData {
 
+    static {
+        System.out.println("class CopyInDataObject loaded");
+    }
+
     @CopyOrder(0)
     private long recordId;
 
