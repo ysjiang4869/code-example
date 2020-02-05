@@ -4,8 +4,7 @@ import javassist.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -14,75 +13,105 @@ import java.util.stream.Collectors;
  */
 public class CopyMethodGenerator {
 
-    private static final Logger logger= LoggerFactory.getLogger(CopyMethodGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(CopyMethodGenerator.class);
+    private static final String FIRST_FIELD_ORDER_NAME = "NULL";
 
-    private CopyMethodGenerator(){};
-
-    /**
-     * modify generateCopyString method of CopyInData implements
-     * @param className the class name which need to modify,must implement CopyInData interface
-     * @throws NotFoundException some thing can not found
-     * @throws ClassNotFoundException class not found
-     * @throws CannotCompileException compile error
-     */
-    public static void modifyCopyMethod(String className) throws NotFoundException, ClassNotFoundException, CannotCompileException {
-        ClassPool classPool= ClassPool.getDefault();
-        classPool.appendClassPath(new LoaderClassPath(CopyMethodGenerator.class.getClassLoader()));
-        CtClass ct=classPool.getCtClass(className);
-        //validate if the class inherit CopyIn interface
-        CtClass[] interfaces=ct.getInterfaces();
-        CtClass copyInInterface=classPool.getCtClass("org.jys.example.common.sql.CopyInData");
-        if(!Arrays.asList(interfaces).contains(copyInInterface)){
-            String msg=String.format("class [%s] not inherited from [%s]",className, copyInInterface.getName());
-           throw new NotFoundException(msg);
-        }
-        CtField[] fields=ct.getDeclaredFields();
-        //validate CopyOrder has different value
-        //you should use classPool to get interface info and validate
-        //not use Class.forName, because it loaded the class and cause loader (instance of  sun/misc/Launcher$AppClassLoader): attempted  duplicate class definition for name
-        boolean[] validate=new boolean[fields.length];
-        for (CtField f:fields) {
-            if(f.hasAnnotation(CopyOrder.class)){
-                int order=((CopyOrder)f.getAnnotation(CopyOrder.class)).value();
-                if(order>=validate.length||validate[order]){
-                    throw new CannotCompileException("copy order must begin from 0 and must be continuous");
-                }
-                validate[order]=true;
-            }
-        }
-        List<CtField> sortedFields= Arrays.stream(fields).filter(a->a.hasAnnotation(CopyOrder.class))
-                .sorted((a,b)-> {
-                    try {
-                        return ((CopyOrder)a.getAnnotation(CopyOrder.class)).value()-((CopyOrder)b.getAnnotation(CopyOrder.class)).value();
-                    } catch (ClassNotFoundException e) {
-                        //this can not happen
-                        return 0;
-                    }
-                }).collect(Collectors.toList());
-        StringBuilder body=new StringBuilder("return new StringBuilder()");
-        for (CtField f: sortedFields ){
-            body.append(".append(").append(f.getName()).append(").append(").append("getDelimiter()").append(")");
-        }
-        body.append(".toString();");
-        logger.info("copy in body is[{}]",body.toString());
-        ct.getDeclaredMethod("generateCopyString").setBody(body.toString());
-        ct.toClass();
+    private CopyMethodGenerator() {
     }
 
-    public static void main(String[] args){
-        try {
-            modifyCopyMethod("org.jys.example.common.sql.CopyInDataObject");
-            CopyInDataObject p=new CopyInDataObject();
-            p.setRecordId(123456L);
-            p.setPersonId("3789k199365541235");
-            p.setAgeLowerLimit(10);
-            p.setAgeUpLimit(50);
-            p.setGender(1);
-            p.setImageUrl("http://127.0.0.1/");
-            String copyString=p.generateCopyString();
-            System.out.println(copyString);
-        } catch (NotFoundException | ClassNotFoundException | CannotCompileException e) {
-            e.printStackTrace();
+    public static void modifyCopyMethod(String className) throws NotFoundException, CannotCompileException {
+        ClassPool classPool = ClassPool.getDefault();
+        //append current class path for search class
+        classPool.appendClassPath(new LoaderClassPath(CopyMethodGenerator.class.getClassLoader()));
+        //get the class to modify
+        CtClass ct = classPool.getCtClass(className);
+
+        CtClass copyInInterface = classPool.getCtClass(CopyInData.class.getName());
+        //validate if the class inherit CopyInData interface
+        if (!ct.subtypeOf(copyInInterface)) {
+            String msg = String.format("class [%s] is not inherited from [%s]", className, copyInInterface.getName());
+            throw new NotFoundException(msg);
         }
+        //all fields (include inherit from supper class)
+        CtField[] allFields = ct.getFields();
+        //fields declared in current class
+        CtField[] declaredFields = ct.getDeclaredFields();
+        //unique field name map ,key is field name , value is CtField
+        //first add all declared fields
+        Map<String, CtField> uniqueFieldNameMap =
+                Arrays.stream(declaredFields).collect(Collectors.toMap(CtField::getName, fx -> fx));
+        //add supper class field not defined in current class
+        Arrays.stream(allFields).forEach(f -> uniqueFieldNameMap.putIfAbsent(f.getName(), f));
+
+        //filter field has CopyOrder annotation
+        List<CtField> fieldHasAnnotations =
+                uniqueFieldNameMap.values().stream().filter((a) -> a.hasAnnotation(CopyOrder.class)).collect(Collectors.toList());
+        //get map which value is CtFiled, key is field name which is before value field
+        Map<String, CtField> annotationInfoMap = fieldHasAnnotations.stream()
+                .collect(Collectors.toMap((fx) -> {
+                    try {
+                        return ((CopyOrder) fx.getAnnotation(CopyOrder.class)).beforeField();
+                    } catch (ClassNotFoundException var2) {
+                        logger.error(var2.getMessage(), var2);
+                        return null;
+                    }
+                }, (fx) -> fx));
+        //validate order info if correct
+        if (fieldHasAnnotations.size() != annotationInfoMap.size()) {
+            throw new CannotCompileException("field order info is not correct, some fields has same beforeField() value");
+        }
+        //fields after sort
+        LinkedList<CtField> sortedFields = new LinkedList<>();
+        if (annotationInfoMap.containsKey(FIRST_FIELD_ORDER_NAME)) {
+            sortedFields.add(annotationInfoMap.get(FIRST_FIELD_ORDER_NAME));
+            annotationInfoMap.remove(FIRST_FIELD_ORDER_NAME);
+        } else {
+            throw new NotFoundException("no filed CopyOrder is NULL, no start field can be detect");
+        }
+
+        String fieldName;
+        int currentOrder = 1;
+        logger.debug("field order[{}], field name [{}]", currentOrder, sortedFields.getFirst().getName());
+        //sort
+        for (int i = 0; i < annotationInfoMap.size(); ++i) {
+            fieldName = sortedFields.getLast().getName();
+            if (!annotationInfoMap.containsKey(fieldName)) {
+                String errorMessage = String.format("can not find field which is before field[%s]", fieldName);
+                throw new NotFoundException(errorMessage);
+            }
+            logger.debug("field order[{}], field name [{}]", ++currentOrder, fieldName);
+            sortedFields.add(annotationInfoMap.get(fieldName));
+        }
+
+        //join all fields get the body
+        StringBuilder methodBody = new StringBuilder("return new StringBuilder()");
+        for (CtField f : sortedFields) {
+            methodBody.append(".append(transferNullOrEmptyData(").append(f.getName()).append(")).append(").append("getFieldDelimiter()").append(")");
+
+        }
+
+        methodBody.append(".toString();");
+        logger.info("copy-in method body for class [{}] is [{}]", className, methodBody);
+
+        //get all methods include inherited from parent
+        CtMethod[] allMethods = ct.getMethods();
+        CtMethod copyMethod;
+        //javassist can call inherited method from parent or interface,
+        //but if need to modify use javassist, you must create the method
+        //can use CtMethod.copy() create
+        try {
+            copyMethod = ct.getDeclaredMethod("generateCopyString");
+            copyMethod.setBody(methodBody.toString());
+        } catch (NotFoundException var17) {
+            logger.info("add method to override supper class method");
+            CtMethod methodFromSuper = Arrays.stream(allMethods).filter((x) -> x.getName()
+                    .contains("generateCopyString")).findFirst().orElse(null);
+            //copy the method
+            copyMethod = CtNewMethod.copy(methodFromSuper, ct, null);
+            copyMethod.setBody(methodBody.toString());
+            ct.addMethod(copyMethod);
+        }
+
+        ct.toClass();
     }
 }

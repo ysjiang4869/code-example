@@ -1,8 +1,5 @@
 package org.jys.example.common.sql;
 
-import org.jys.example.common.sql.CopyInData;
-import org.jys.example.common.sql.CopyOrder;
-
 /**
  * @author YueSong Jiang
  * @date 2019/12/28
@@ -13,32 +10,32 @@ public class CopyInDataObject implements CopyInData {
         System.out.println("class CopyInDataObject loaded");
     }
 
-    @CopyOrder(0)
-    private long recordId;
+    @CopyOrder()
+    private Long recordId;
 
-    @CopyOrder(1)
+    @CopyOrder(beforeField = "recordId")
     private String personId;
 
-    @CopyOrder(2)
-    private int gender;
+    @CopyOrder(beforeField = "personId")
+    private Integer gender;
 
-    @CopyOrder(3)
-    private int ageLowerLimit;
+    @CopyOrder(beforeField = "gender")
+    private Integer ageLowerLimit;
 
-    @CopyOrder(4)
-    private int ageUpLimit;
+    @CopyOrder(beforeField = "ageLowerLimit")
+    private Integer ageUpLimit;
 
-    @CopyOrder(5)
-    private boolean wearGlasses;
+    @CopyOrder(beforeField = "ageUpLimit")
+    private Boolean wearGlasses;
 
-    @CopyOrder(6)
+    @CopyOrder(beforeField = "wearGlasses")
     private String imageUrl;
 
-    public long getRecordId() {
+    public Long getRecordId() {
         return recordId;
     }
 
-    public void setRecordId(long recordId) {
+    public void setRecordId(Long recordId) {
         this.recordId = recordId;
     }
 
@@ -50,35 +47,35 @@ public class CopyInDataObject implements CopyInData {
         this.personId = personId;
     }
 
-    public int getGender() {
+    public Integer getGender() {
         return gender;
     }
 
-    public void setGender(int gender) {
+    public void setGender(Integer gender) {
         this.gender = gender;
     }
 
-    public int getAgeLowerLimit() {
+    public Integer getAgeLowerLimit() {
         return ageLowerLimit;
     }
 
-    public void setAgeLowerLimit(int ageLowerLimit) {
+    public void setAgeLowerLimit(Integer ageLowerLimit) {
         this.ageLowerLimit = ageLowerLimit;
     }
 
-    public int getAgeUpLimit() {
+    public Integer getAgeUpLimit() {
         return ageUpLimit;
     }
 
-    public void setAgeUpLimit(int ageUpLimit) {
+    public void setAgeUpLimit(Integer ageUpLimit) {
         this.ageUpLimit = ageUpLimit;
     }
 
-    public boolean isWearGlasses() {
+    public Boolean isWearGlasses() {
         return wearGlasses;
     }
 
-    public void setWearGlasses(boolean wearGlasses) {
+    public void setWearGlasses(Boolean wearGlasses) {
         this.wearGlasses = wearGlasses;
     }
 
@@ -90,13 +87,12 @@ public class CopyInDataObject implements CopyInData {
         this.imageUrl = imageUrl;
     }
 
+    /**
+     * this will be modified by {@link CopyMethodGenerator}
+     * @return copy string
+     */
     @Override
     public String generateCopyString() {
         return null;
-    }
-
-    @Override
-    public char getDelimiter() {
-        return '\030';
     }
 }

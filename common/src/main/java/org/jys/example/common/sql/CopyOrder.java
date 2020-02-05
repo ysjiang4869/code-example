@@ -1,18 +1,30 @@
 package org.jys.example.common.sql;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * @author jiangys
  * add to CopyIn data field
- * there musn't be same value for same class
- * it is recommend to use from 0 and use continuous number
+ * used for judge copy in data field order
  */
+@Documented
+@Inherited
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CopyOrder {
-    public int value();
+
+    /**
+     * copy order
+     * must be the field name in same class or super no-private field
+     * "NULL" means the first value
+     * the value must be not same for different fields
+     * @return field name which is before this field
+     */
+    String beforeField() default "NULL";
+
+    /**
+     * field name in database
+     * @return field name
+     */
+    String field() default "";
 }
