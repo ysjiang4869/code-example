@@ -32,16 +32,19 @@ public class CopyMethodGenerator {
             String msg = String.format("class [%s] is not inherited from [%s]", className, copyInInterface.getName());
             throw new NotFoundException(msg);
         }
-        //all fields (include inherit from supper class)
+        //all non-private fields (include inherit from supper class)
         CtField[] allFields = ct.getFields();
         //fields declared in current class
         CtField[] declaredFields = ct.getDeclaredFields();
+
         //unique field name map ,key is field name , value is CtField
+        Map<String, CtField> uniqueFieldNameMap = new HashMap<>(allFields.length+declaredFields.length);
+
+        //add non-private fields include inherited from super class
+        //base on origin code, allFields are ordered by class inherit order
+        Arrays.stream(allFields).forEachOrdered(f -> uniqueFieldNameMap.put(f.getName(), f));
         //first add all declared fields
-        Map<String, CtField> uniqueFieldNameMap =
-                Arrays.stream(declaredFields).collect(Collectors.toMap(CtField::getName, fx -> fx));
-        //add supper class field not defined in current class
-        Arrays.stream(allFields).forEach(f -> uniqueFieldNameMap.putIfAbsent(f.getName(), f));
+        Arrays.stream(declaredFields).forEach(f -> uniqueFieldNameMap.put(f.getName(), f));
 
         //filter field has CopyOrder annotation
         List<CtField> fieldHasAnnotations =
@@ -62,6 +65,8 @@ public class CopyMethodGenerator {
         }
         //fields after sort
         LinkedList<CtField> sortedFields = new LinkedList<>();
+
+        //get first field
         if (annotationInfoMap.containsKey(FIRST_FIELD_ORDER_NAME)) {
             sortedFields.add(annotationInfoMap.get(FIRST_FIELD_ORDER_NAME));
             annotationInfoMap.remove(FIRST_FIELD_ORDER_NAME);
@@ -73,21 +78,30 @@ public class CopyMethodGenerator {
         int currentOrder = 1;
         logger.debug("field order[{}], field name [{}]", currentOrder, sortedFields.getFirst().getName());
         //sort
-        for (int i = 0; i < annotationInfoMap.size(); ++i) {
+        for (int i = 0; i < annotationInfoMap.size(); i++) {
             fieldName = sortedFields.getLast().getName();
             if (!annotationInfoMap.containsKey(fieldName)) {
                 String errorMessage = String.format("can not find field which is before field[%s]", fieldName);
                 throw new NotFoundException(errorMessage);
             }
-            logger.debug("field order[{}], field name [{}]", ++currentOrder, fieldName);
+            logger.debug("field order[{}], field name [{}]", ++currentOrder, annotationInfoMap.get(fieldName).getName());
             sortedFields.add(annotationInfoMap.get(fieldName));
         }
 
         //join all fields get the body
-        StringBuilder methodBody = new StringBuilder("return new StringBuilder()");
+        StringBuilder methodBody = null;
         for (CtField f : sortedFields) {
-            methodBody.append(".append(transferNullOrEmptyData(").append(f.getName()).append(")).append(").append("getFieldDelimiter()").append(")");
+            if(methodBody == null){
+                methodBody=new StringBuilder("return new StringBuilder()");
+            }else {
+                methodBody.append(".append(getFieldDelimiter())");
+            }
+            methodBody.append(".append(transferNullOrEmptyData(").append(f.getName()).append("))");
 
+        }
+
+        if(methodBody == null){
+            throw  new NullPointerException("method body is null!");
         }
 
         methodBody.append(".toString();");

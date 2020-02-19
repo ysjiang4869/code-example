@@ -11,25 +11,25 @@ public class CopyInDataObject implements CopyInData {
     }
 
     @CopyOrder()
-    private Long recordId;
+    protected Long recordId;
 
     @CopyOrder(beforeField = "recordId")
-    private String personId;
+    protected String personId;
 
     @CopyOrder(beforeField = "personId")
-    private Integer gender;
+    protected Integer gender;
 
     @CopyOrder(beforeField = "gender")
-    private Integer ageLowerLimit;
+    protected Integer ageLowerLimit;
 
     @CopyOrder(beforeField = "ageLowerLimit")
-    private Integer ageUpLimit;
+    protected Integer ageUpLimit;
 
     @CopyOrder(beforeField = "ageUpLimit")
-    private Boolean wearGlasses;
+    protected Boolean wearGlasses;
 
     @CopyOrder(beforeField = "wearGlasses")
-    private String imageUrl;
+    protected String imageUrl;
 
     public Long getRecordId() {
         return recordId;

@@ -21,6 +21,8 @@ public class CommonTools {
         //can not use CopyInDataObject.class.getName() get the name
         //this will cause class load first!!
         CopyMethodGenerator.modifyCopyMethod("org.jys.example.common.sql.CopyInDataObject");
+        CopyMethodGenerator.modifyCopyMethod("org.jys.example.common.sql.CopyInDataObject2");
+        CopyMethodGenerator.modifyCopyMethod("org.jys.example.common.sql.CopyInDataObject3");
         SpringApplication.run(CommonTools.class,args);
     }
 }
