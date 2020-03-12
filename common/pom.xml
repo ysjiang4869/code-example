@@ -141,10 +141,19 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.9</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vertica</groupId>
+            <artifactId>vertica-jdbc</artifactId>
+            <version>9.1.1-0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/vertica-jdbc-9.1.1-0.jar</systemPath>
         </dependency>
 
     </dependencies>
