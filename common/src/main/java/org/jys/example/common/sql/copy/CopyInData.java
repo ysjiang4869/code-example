@@ -1,4 +1,4 @@
-package org.jys.example.common.sql;
+package org.jys.example.common.sql.copy;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,4 +48,8 @@ public interface CopyInData {
             return Objects.isNull(value) ? this.getNullCharacter() : value.toString();
         }
     }
+
+    long getRecordTime();
+
+    long getAlgorithmId();
 }

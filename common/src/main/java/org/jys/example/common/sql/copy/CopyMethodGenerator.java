@@ -1,4 +1,4 @@
-package org.jys.example.common.sql;
+package org.jys.example.common.sql.copy;
 
 import javassist.*;
 import org.slf4j.Logger;

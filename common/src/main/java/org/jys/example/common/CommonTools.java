@@ -2,7 +2,7 @@ package org.jys.example.common;
 
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
-import org.jys.example.common.sql.CopyMethodGenerator;
+import org.jys.example.common.sql.copy.CopyMethodGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -20,9 +20,9 @@ public class CommonTools {
     public static void main(String[] args) throws NotFoundException, CannotCompileException {
         //can not use CopyInDataObject.class.getName() get the name
         //this will cause class load first!!
-        CopyMethodGenerator.modifyCopyMethod("org.jys.example.common.sql.CopyInDataObject");
-        CopyMethodGenerator.modifyCopyMethod("org.jys.example.common.sql.CopyInDataObject2");
-        CopyMethodGenerator.modifyCopyMethod("org.jys.example.common.sql.CopyInDataObject3");
+        CopyMethodGenerator.modifyCopyMethod("org.jys.example.common.sql.copy.CopyInDataObject");
+        CopyMethodGenerator.modifyCopyMethod("org.jys.example.common.sql.copy.CopyInDataObject2");
+        CopyMethodGenerator.modifyCopyMethod("org.jys.example.common.sql.copy.CopyInDataObject3");
         SpringApplication.run(CommonTools.class,args);
     }
 }

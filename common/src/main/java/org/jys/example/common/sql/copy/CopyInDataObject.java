@@ -1,4 +1,4 @@
-package org.jys.example.common.sql;
+package org.jys.example.common.sql.copy;
 
 /**
  * @author YueSong Jiang
@@ -94,5 +94,15 @@ public class CopyInDataObject implements CopyInData {
     @Override
     public String generateCopyString() {
         return null;
+    }
+
+    @Override
+    public long getRecordTime() {
+        return 0;
+    }
+
+    @Override
+    public long getAlgorithmId() {
+        return 0;
     }
 }
