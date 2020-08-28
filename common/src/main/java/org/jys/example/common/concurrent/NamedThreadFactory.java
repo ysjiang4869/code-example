@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Create user-defined thread factory, this is ali recommend method
  */
 public class NamedThreadFactory implements ThreadFactory {
-
+    private static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);
     private final ThreadGroup group;
     private final AtomicInteger threadNumber = new AtomicInteger(1);
     private final String namePrefix;
@@ -17,7 +17,7 @@ public class NamedThreadFactory implements ThreadFactory {
     public NamedThreadFactory(String poolName) {
         SecurityManager s = System.getSecurityManager();
         group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-        namePrefix = poolName + "-thread-";
+        namePrefix = poolName + "-" + POOL_NUMBER.getAndIncrement() + "-thread-";
     }
 
     @Override
