@@ -70,13 +70,14 @@ public class BloomFilterRedis<T> implements BloomFilter<T> {
         List<Boolean> results = template.execute(new SessionCallback<List<Boolean>>() {
             // use redis transaction
             @Override
-            public <K, V> List<Boolean> execute(@Nullable RedisOperations<K, V> redisOperations) throws DataAccessException {
-                if(Objects.isNull(redisOperations)){
-                    throw new NullPointerException("redis operation is null");
-                }
-                redisOperations.multi();
+            public List<Boolean> execute(@Nullable RedisOperations redisOperations) throws DataAccessException {
+                //in origin code {org.springframework.data.redis.core.RedisTemplate.execute(org.springframework.data.redis.core.SessionCallback<T>)}
+                // the template.execute method just paste this in it. so no need to use redisOperation
+                //the transaction theory is: use session callback to bind connection to current thread,
+                //so all command execute in same connection
+                template.multi();
                 Arrays.stream(hash(element)).forEach(index -> template.opsForValue().getBit(name, index));
-                return redisOperations.exec().stream().map(x->(Boolean)x).collect(Collectors.toList());
+                return template.exec().stream().map(x->(Boolean)x).collect(Collectors.toList());
             }
         });
         if (results == null || results.isEmpty()) {
