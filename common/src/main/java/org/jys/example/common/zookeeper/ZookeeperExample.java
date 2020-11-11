@@ -85,6 +85,9 @@ public class ZookeeperExample {
                         break;
                     case CHILD_REMOVED:
                         System.out.println("remove");
+                        break;
+                    default:
+                        break;
                 }
             });
         } catch (Exception e) {
