@@ -3,7 +3,6 @@ package org.jys.example.common.plugin.swagger;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.google.common.base.Optional;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
 import springfox.documentation.spi.DocumentationType;
@@ -11,6 +10,7 @@ import springfox.documentation.spi.schema.ModelPropertyBuilderPlugin;
 import springfox.documentation.spi.schema.contexts.ModelPropertyContext;
 
 import java.lang.reflect.Field;
+import java.util.Optional;
 
 /**
  * @author shenjianeng

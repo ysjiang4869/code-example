@@ -1,6 +1,5 @@
 package org.jys.example.common.plugin.swagger;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +20,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * copy from https://github.com/SpringForAll/spring-boot-starter-swagger
@@ -76,11 +76,8 @@ public class SwaggerAutoConfiguration {
         Docket docket = docketForBuilder.select()
                 // 只支持 @ApiOperation 注解标注的方法
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(
-                        Predicates.and(
-                                Predicates.not(Predicates.or(excludePath)),
-                                Predicates.or(basePath)
-                        )
+                .paths(excludePath.stream().reduce(x->true, Predicate::or).negate()
+                                .and(basePath.stream().reduce(x->true,Predicate::or))
                 ).build();
 
         /* ignoredParameterTypes **/
