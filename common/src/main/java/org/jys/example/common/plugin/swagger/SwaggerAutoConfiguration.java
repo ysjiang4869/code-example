@@ -1,6 +1,5 @@
 package org.jys.example.common.plugin.swagger;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -76,8 +75,8 @@ public class SwaggerAutoConfiguration {
         Docket docket = docketForBuilder.select()
                 // 只支持 @ApiOperation 注解标注的方法
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .paths(excludePath.stream().reduce(x->true, Predicate::or).negate()
-                                .and(basePath.stream().reduce(x->true,Predicate::or))
+                .paths(excludePath.stream().reduce(x -> false, Predicate::or).negate()
+                        .and(basePath.stream().reduce(x -> false, Predicate::or))
                 ).build();
 
         /* ignoredParameterTypes **/
