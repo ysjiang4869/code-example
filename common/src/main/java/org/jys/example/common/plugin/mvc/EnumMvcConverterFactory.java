@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
  * springMVC 枚举类的转换器
  * 如果枚举类中有工厂方法(静态方法)被标记为{@link EnumConvertMethod },则调用该方法转为枚举对象
  *
- * @author shenjianeng
+ * @author jiangyuesong
  * @date 2020/4/19
  */
 @SuppressWarnings("all")

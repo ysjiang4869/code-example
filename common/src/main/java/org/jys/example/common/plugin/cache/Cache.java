@@ -6,7 +6,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.Map;
 
 /**
- * @author shenjianeng
+ * @author jiangyuesong
  * @date 2020/4/4
  */
 public interface Cache<K, V> {
@@ -24,14 +24,14 @@ public interface Cache<K, V> {
     V getIfPresent(@NonNull K key);
 
     /**
-     * 根据 key 从缓存中获取,如果缓存中不存在,调用 {@link com.chd.plugin.cache.MultiCacheLoader#loadCache(java.util.Collection)} 加载数据,并添加到缓存中
+     * 根据 key 从缓存中获取,如果缓存中不存在,调用 {@link MultiCacheLoader#loadCache(java.util.Collection)} 加载数据,并添加到缓存中
      */
     @NonNull
     Map<K, V> getOrLoadIfAbsent(@NonNull Iterable<K> keys);
 
     /**
      * 根据 key 从缓存中获取
-     * 如果缓存中不存在,调用 {@link com.chd.plugin.cache.MultiCacheLoader#loadCache(java.util.Collection)} 加载数据,并添加到缓存中
+     * 如果缓存中不存在,调用 {@link MultiCacheLoader#loadCache(java.util.Collection)} 加载数据,并添加到缓存中
      */
     @Nullable
     V getOrLoadIfAbsent(@NonNull K key);

@@ -32,7 +32,6 @@ public class SwaggerAutoConfiguration {
 
     private static final Set<String> DEFAULT_IGNORED_PARAMETER_TYPES =
             ImmutableSet.of(
-                    "com.dxy.platform.chd.commons.session.UserSession",
                     "javax.servlet.http.HttpServletRequest",
                     "javax.servlet.http.HttpServletResponse");
 
