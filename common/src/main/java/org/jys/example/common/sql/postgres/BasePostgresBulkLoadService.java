@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -59,7 +60,9 @@ public abstract class BasePostgresBulkLoadService<T extends CopyInData> implemen
     public BasePostgresBulkLoadService(BaseTable table, long algorithm) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         this.table = table;
         this.algorithm = algorithm;
-        T item = getGenericClass().getDeclaredConstructor().newInstance();
+        //获得泛型实际类型
+        Class<T> clazz = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        T item = clazz.getDeclaredConstructor().newInstance();
         lineDelimiter = '\n';
         stringLineDelimiter = "\\n";
         fieldDelimiter = item.getFieldDelimiter();
